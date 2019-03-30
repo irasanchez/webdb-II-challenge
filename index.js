@@ -63,9 +63,16 @@ server.delete("/api/zoos/:id", (req, res) => {
     .where({ id })
     .first()
     .then(zoo => {
-      res
-        .status(200)
-        .json({ message: "This zoo has been successfully deleted." });
+      if (zoo) {
+        res
+          .status(200)
+          .json({ message: "This zoo has been successfully deleted." });
+      } else {
+        res.status(404).json({ message: "Zoo not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error);
     });
 });
 
