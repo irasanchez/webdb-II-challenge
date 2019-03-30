@@ -12,7 +12,7 @@ server.use(helmet());
 
 // endpoints here
 
-server.post("/api/zoos", (req, res) => {
+server.post(`/api/zoos`, (req, res) => {
   const zoo = req.body;
 
   if (zoo.name) {
@@ -30,6 +30,36 @@ server.post("/api/zoos", (req, res) => {
     });
   }
 });
+
+// ### `GET /api/zoos/:id`
+
+// When the client makes a `GET` request to `/api/zoos/:id`, find the _zoo_ associated with the given `id`. Remember to handle errors and send the correct status code.
+
+server.get(`api/zoos/:id`, (req, res) => {
+  const { id } = req.params;
+
+  db("zoos")
+    .where({ id })
+    .first()
+    .then(zoo => {
+      if (zoo) {
+        res.status(200).json(zoo);
+      } else {
+        res.status(404).json({ message: "Zoo not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error);
+    });
+});
+
+// ### DELETE /api/zoos/:id
+
+// When the client makes a `DELETE` request to this endpoint, the _zoo_ that has the provided `id` should be removed from the database.
+
+// ### PUT /api/zoos/:id
+
+// When the client makes a `PUT` request to this endpoint passing an object with the changes, the _zoo_ with the provided `id` should be updated with the new information.
 
 //
 
