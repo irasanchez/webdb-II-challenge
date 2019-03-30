@@ -38,7 +38,7 @@ server.post(`/api/zoos`, (req, res) => {
 server.get("/api/zoos/:id", (req, res) => {
   const id = req.params.id;
   db("zoos")
-    .where()
+    .where({ id })
     .first()
     .then(zoo => {
       if (zoo) {
@@ -55,6 +55,19 @@ server.get("/api/zoos/:id", (req, res) => {
 // ### DELETE /api/zoos/:id
 
 // When the client makes a `DELETE` request to this endpoint, the _zoo_ that has the provided `id` should be removed from the database.
+
+server.delete("/api/zoos/:id", (req, res) => {
+  const id = req.params.id;
+
+  db("zoos")
+    .where({ id })
+    .first()
+    .then(zoo => {
+      res
+        .status(200)
+        .json({ message: "This zoo has been successfully deleted." });
+    });
+});
 
 // ### PUT /api/zoos/:id
 
