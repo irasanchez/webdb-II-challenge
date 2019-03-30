@@ -72,13 +72,33 @@ server.delete("/api/zoos/:id", (req, res) => {
       }
     })
     .catch(error => {
-      res.status(500).json(error);
+      res.status(500).json({ error: "This zoo could not be deleted." });
     });
 });
 
 // ### PUT /api/zoos/:id
 
 // When the client makes a `PUT` request to this endpoint passing an object with the changes, the _zoo_ with the provided `id` should be updated with the new information.
+
+server.put("/api/zoos/:id", (req, res) => {
+  const id = req.params.id;
+  const changedZoo = req.body;
+
+  db("zoos")
+    .where({ id })
+    .first()
+    .update(changedZoo)
+    .then(count => {
+      if (count) {
+        res.status(200).json(changedZoo);
+      } else {
+        res.status(404).json({ message: "Zoo not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error: "This zoo could not be edited." });
+    });
+});
 
 //
 
