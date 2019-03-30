@@ -35,11 +35,10 @@ server.post(`/api/zoos`, (req, res) => {
 
 // When the client makes a `GET` request to `/api/zoos/:id`, find the _zoo_ associated with the given `id`. Remember to handle errors and send the correct status code.
 
-server.get(`api/zoos/:id`, (req, res) => {
-  const { id } = req.params;
-
+server.get("/api/zoos/:id", (req, res) => {
+  const id = req.params.id;
   db("zoos")
-    .where({ id })
+    .where()
     .first()
     .then(zoo => {
       if (zoo) {
