@@ -12,6 +12,8 @@ server.use(helmet());
 
 // endpoints here
 
+//ZOOS
+
 server.post(`/api/zoos`, (req, res) => {
   const zoo = req.body;
 
@@ -31,10 +33,6 @@ server.post(`/api/zoos`, (req, res) => {
   }
 });
 
-// ### `GET /api/zoos/:id`
-
-// When the client makes a `GET` request to `/api/zoos/:id`, find the _zoo_ associated with the given `id`. Remember to handle errors and send the correct status code.
-
 server.get("/api/zoos/:id", (req, res) => {
   const id = req.params.id;
   db("zoos")
@@ -52,16 +50,12 @@ server.get("/api/zoos/:id", (req, res) => {
     });
 });
 
-// ### DELETE /api/zoos/:id
-
-// When the client makes a `DELETE` request to this endpoint, the _zoo_ that has the provided `id` should be removed from the database.
-
 server.delete("/api/zoos/:id", (req, res) => {
   const id = req.params.id;
 
   db("zoos")
     .where({ id })
-    .first()
+    .del()
     .then(zoo => {
       if (zoo) {
         res
@@ -75,10 +69,6 @@ server.delete("/api/zoos/:id", (req, res) => {
       res.status(500).json({ error: "This zoo could not be deleted." });
     });
 });
-
-// ### PUT /api/zoos/:id
-
-// When the client makes a `PUT` request to this endpoint passing an object with the changes, the _zoo_ with the provided `id` should be updated with the new information.
 
 server.put("/api/zoos/:id", (req, res) => {
   const id = req.params.id;
@@ -97,6 +87,84 @@ server.put("/api/zoos/:id", (req, res) => {
     })
     .catch(error => {
       res.status(500).json({ error: "This zoo could not be edited." });
+    });
+});
+
+// BEARS
+
+server.post(`/api/bears`, (req, res) => {
+  const bear = req.body;
+
+  if (bear.name) {
+    db.insert(bear)
+      .into("bears")
+      .then(ids => {
+        res.status(201).json(ids[0]);
+      })
+      .catch(error => {
+        res.status(500).json(error);
+      });
+  } else {
+    res.status(400).json({
+      error: `The zoo doesn\'t even have a name? That's sad. Let's give it one and try again`
+    });
+  }
+});
+
+server.get("/api/bears/:id", (req, res) => {
+  const id = req.params.id;
+  db("bears")
+    .where({ id })
+    .first()
+    .then(bear => {
+      if (bear) {
+        res.status(200).json(bear);
+      } else {
+        res.status(404).json({ message: "Bear not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error);
+    });
+});
+
+server.delete("/api/bears/:id", (req, res) => {
+  const id = req.params.id;
+
+  db("bears")
+    .where({ id })
+    .del()
+    .then(bear => {
+      if (bear) {
+        res
+          .status(200)
+          .json({ message: "This bear has been successfully deleted." });
+      } else {
+        res.status(404).json({ message: "Bear not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error: "This bear could not be deleted." });
+    });
+});
+
+server.put("/api/bears/:id", (req, res) => {
+  const id = req.params.id;
+  const changedBear = req.body;
+
+  db("bears")
+    .where({ id })
+    .first()
+    .update(changedBear)
+    .then(count => {
+      if (count) {
+        res.status(200).json(changedBear);
+      } else {
+        res.status(404).json({ message: "Bear not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error: "This bear could not be edited." });
     });
 });
 
