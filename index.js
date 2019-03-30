@@ -18,8 +18,8 @@ server.post("/api/zoos", (req, res) => {
   if (zoo.name) {
     db.insert(zoo)
       .into("zoos")
-      .then(id => {
-        res.status(201).json(id);
+      .then(ids => {
+        res.status(201).json(ids[0]);
       })
       .catch(error => {
         res.status(500).json(error);
